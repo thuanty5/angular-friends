@@ -1,53 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
+
 <head>
   <title>Angular Friends</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body>
+
+<!-- friendCtrl link to body -->
+<body ng-controller="friendsCtrl">
+
   <h1>The <strong>facebook</strong> Friend Machine</h1>
 
   <div class="friends">
+
     <form class="form-inline searchForm" role="form">
       <div class="form-group">
-        <input class="form-control" placeholder="Search Anything About Your Friends">
-
-        <select class="input-medium">
-          <option>Name</option>
-          <option>#Friends</option>
-          <option>City</option>
-          <option>State</option>
-          <option>Country</option>
+        <!-- search by name -->
+        <input class="form-control" placeholder="Search Name" ng-model="search.name">
+        <!-- search by state -->
+        <input class="form-control" placeholder="Search State" ng-model="search.location.state">
+        <!-- select option val loop through and default selected -->
+        <select class="input-medium" ng-model="sortValueSelected" ng-options="item.name for item in sortByValue track by item.value">
         </select>
-
-        <select class="input-medium">
-          <option value="-">Descending</option>
-          <option value="+">Ascending</option>
+        <!-- select option asc/dsc loop through and default selected -->
+        <select class="input-medium" ng-model="sortAscDescSelected" ng-options="item.name for item in sortByAscDsc track by item.value">
         </select>
       </div>
     </form>
 
     <ul>
-      <li class='friend'>
-        <img class="profile-pic" src='http://placebear.com/50/50.jpg'>
-        <h3>Cali Fornia</h3>
+      <!-- loop friends obj, filter by search, order by selected val -->
+      <li class='friend' ng-repeat="friend in friends | filter: search | orderBy: sortAscDescSelected.value + sortValueSelected.value ">
+        <!-- loop friends obj pics -->
+        <img class="profile-pic" ng-src="{{ friend.pic_square }}">
+        <!-- loop friends obj name -->
+        <h3> {{ friend.name }} </h3>
+        <!-- loop friends obj location, check for location, true add comma-->
         <div class="location">
-          Location: New Port Beach, California, United States
+          <strong>Location: </strong> <span ng-if="friend.location.city == null">No Location Specified</span>
+          {{ friend.location.city }} {{ friend.location.state }}<span ng-if="friend.location.city != null">,</span> {{friend.location.country}}
         </div>
+        <!-- loop friends obj status, check for status -->
         <div class="status">
-          Status: I hate the snow. I wish I was on the beach right now!!!
+          <strong>Status: </strong><span ng-if="friend.status == null">No Status Specified</span>{{ friend.status }}
         </div>
+        <!-- loop friends obj friend count, check for friends -->
         <div class="num-friends">
-          Friends: 1,367
+          <strong>Friends: </strong><span ng-if="friend.friend_count == null">No Friends Specified</span>{{ friend.friend_count }}
         </div>
       </li>
     </ul>
+    
   </div>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <!-- your scripts here -->
+  <script src="./app.js"></script>
+  <script src="./friendsCtrl.js"></script>
+  <script src="./friendsService.js"></script>
+
 </body>
+
 </html>
